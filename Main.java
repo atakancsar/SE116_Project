@@ -1,3 +1,6 @@
+// Programın çalıştırıldığı ve girilen verilerin okunup "CommandProcessor" dosyasına
+// gönderildiği yerdir.
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.BufferedReader;
@@ -6,8 +9,17 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
+        CommandProcessor cp = new CommandProcessor(null, null, null, null);
         Main fsm = new Main();
-        CommandProcessor cp = new CommandProcessor();
+        Logger logger = new Logger();
+        Symbol symbol = new Symbol();
+        State state = new State();
+        Transition transition = new Transition();
+        cp.logger = logger;
+        cp.symbol = symbol;
+        cp.state = state;
+        cp.transition = transition;
+
         if (args[0].length()>0) {
             fsm.displayInfo();
             fsm.startProgramWithFile(args[0], cp);
@@ -38,7 +50,7 @@ public class Main {
             String line;
 
             String command;
-            String values;
+            String values="";
             while ((line = bf.readLine()) != null) {
                 if (line.contains(";")) {
                     if (!line.endsWith(";")) {
@@ -49,16 +61,26 @@ public class Main {
                         if (string.contains(" ")) {
                             command = string.substring(0, string.indexOf(" ")).toUpperCase();
                             values = string.substring(string.indexOf(" ") + 1);
+                            if (cp.logger.isLogging) {
+                                cp.logger.log(string);
+                            }
                             cp.activeCommand(command, values);
+                            // System.out.println(command+"-->"+values); for testing
                         }
                         else{
                             command = string.toUpperCase();
-                            cp.activeCommand(command, "");
-                            System.out.println(command);
+                            if (cp.logger.isLogging) {
+                                cp.logger.log(string);
+                            }
+                            cp.activeCommand(command, values);
+                            // System.out.println(command+"-->" +values); for testing 
                         }
+                        values="";
+                        command = null;
                     }
                 }
             }
+            cp.logger.log("-------------------------------------");
         }catch(IOException exception){System.out.println("File cannot readable.. " + exception.getMessage());}
     }
 }

@@ -1,15 +1,31 @@
 import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Logger {
-    private boolean activeLog;
+    protected boolean isLogging;
     
     public Logger() {
-        this.activeLog = false;
+        this.isLogging = false;
     }
     public void changeLogStatus(){
-        this.activeLog = !this.activeLog;
+        this.isLogging = !this.isLogging;
+        if (isLogging==true) {
+            LocalTime currentTime = LocalTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String timeString = currentTime.format(formatter);
+            log("----> " + timeString + " <----");
+        }
+
     }
     public void log(String message){
-
+        if (isLogging) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("log.txt", true))){
+                bw.write(message);
+                bw.newLine();
+            } catch (Exception e) {
+            }
+        }
     }
 }

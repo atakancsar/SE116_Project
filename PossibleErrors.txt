@@ -1,0 +1,2 @@
+(1)Kullanıcının girdiği initial state ve final statelerin aynı zamanda düz states kısmında da
+tanımlanması gerekir.
